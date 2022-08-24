@@ -1,3 +1,4 @@
+# sourcery skip: simplify-fstring-formatting, use-fstring-for-formatting
 import os
 from sqlalchemy import Column, String, Integer, create_engine
 from flask_sqlalchemy import SQLAlchemy
@@ -5,7 +6,7 @@ import json
 
 database_name = "bookshelf"
 database_path = "postgresql://{}:{}@{}/{}".format(
-    "student", "student", "localhost:5432", database_name
+    "postgres", "Possible001#", "localhost:5432", database_name
 )
 
 db = SQLAlchemy()

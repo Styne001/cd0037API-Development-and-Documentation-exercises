@@ -1,3 +1,4 @@
+# sourcery skip: simplify-fstring-formatting, use-fstring-for-formatting
 import os
 from sqlalchemy import Column, String, Integer, Boolean, create_engine
 from flask_sqlalchemy import SQLAlchemy
@@ -6,9 +7,7 @@ from sqlalchemy.sql.schema import PrimaryKeyConstraint
 
 database_name = "plantsdb"
 # Feel free to remove the password argument from the below format() method
-database_path = "postgresql://{}:{}@{}/{}".format(
-    "postgres", "", "localhost:5432", database_name
-)
+database_path ="postgresql://{}:{}@{}/{}".format('student', 'student','localhost:5432', database_name)
 db = SQLAlchemy()
 
 
