@@ -130,20 +130,31 @@ def create_app(test_config=None):  # sourcery skip: do-not-use-bare-except
         new_title = body.get('title')
         new_author = body.get('author')
         new_rating = body.get('rating')
+        search = body.get('search', None)
 
-        try: 
-            book = Book(title=new_title, author=new_author, rating=new_rating)
-            book.insert()
+        try:
+            if search:
+                selection = Book.query.order_by(Book.id).filter(Book.title.ilike('%{}%'.format(search)))
+                current_books = paginate_books(request, selection)
 
-            selection = Book.query.order_by(Book.id).all()
-            current_books = paginate_books(request, selection)
-
-            return jsonify({
-                'success': True,
-                'created': book.id,
-                'books': current_books,
-                'total_books': len(Book.query.all())
-            })
+                return jsonify({
+                    'success': True,
+                    'books': current_books,
+                    'total_books': len(selection.all())
+                })
+            else: 
+                book = Book(title=new_title, author=new_author, rating=new_rating)
+                book.insert()
+    
+                selection = Book.query.order_by(Book.id).all()
+                current_books = paginate_books(request, selection)
+    
+                return jsonify({
+                    'success': True,
+                    'created': book.id,
+                    'books': current_books,
+                    'total_books': len(Book.query.all())
+                })
 
         except:
             abort(422)
@@ -151,7 +162,7 @@ def create_app(test_config=None):  # sourcery skip: do-not-use-bare-except
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({
-            "Success": False,
+            "success": False,
             "error": 404,
             "message": "resource not found"
         }), 404
@@ -159,7 +170,7 @@ def create_app(test_config=None):  # sourcery skip: do-not-use-bare-except
     @app.errorhandler(400)
     def bad_request(error):
         return jsonify({
-            "Success": False,
+            "success": False,
             "error": 400,
             "message": "bad request"
         }), 400
@@ -167,7 +178,7 @@ def create_app(test_config=None):  # sourcery skip: do-not-use-bare-except
     @app.errorhandler(422)
     def unprocessable(error):
         return jsonify({
-            "Success": False,
+            "success": False,
             "error": 422,
             "message": "unprocessable"
         }), 422
@@ -175,7 +186,7 @@ def create_app(test_config=None):  # sourcery skip: do-not-use-bare-except
     @app.errorhandler(405)
     def bad_method(error):
         return jsonify({
-            "Success": False,
+            "success": False,
             "error": 405,
             "message": "method not allowed"
         }), 405
